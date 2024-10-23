@@ -65,7 +65,7 @@ const Login: React.FC = () =>  {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (handleCheckForm()) return;
+      if (!handleCheckForm()) return;
 
       const response = await axios.post("https://localhost:7253/api/Users/login", {
         username: user.username,
@@ -86,12 +86,8 @@ const Login: React.FC = () =>  {
 
   const handleCheckForm = () => {
     if (
-      user.email.length === 0 ||
       user.username.length === 0 ||
-      user.password.length === 0 ||
-      user.firstName.length === 0 ||
-      user.lastName.length === 0 ||
-      user.birthDate.length === 0
+      user.password.length === 0
     ) {
       setError(true);
       return false;
