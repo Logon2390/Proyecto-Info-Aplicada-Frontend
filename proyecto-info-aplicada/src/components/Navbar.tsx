@@ -28,7 +28,7 @@ function NavbarComponent() {
           <Nav className="me-auto">
             <Nav.Link>
               <Link className="nav-link" to="/upload">
-                Subir Archivos
+                Upload Files
               </Link>
             </Nav.Link>
           </Nav>
@@ -45,20 +45,20 @@ function NavbarComponent() {
                 variant="#14d48c"
               >
                 <PersonIcon style={{ marginRight: "5px" }} />
-                {user.userName}
+                {user.username}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <NavDropdown.Item>
                   <Link className="dropdown-item" to="/view1">
-                    Opcion 1
+                    Opt 1
                   </Link>
                 </NavDropdown.Item>
 
                 <NavDropdown.Divider />
                 <NavDropdown.Item>
                   <Link className="dropdown-item" to="/" onClick={handleLogout}>
-                    Cerrar sesión
+                    Sing out
                   </Link>
                 </NavDropdown.Item>
               </Dropdown.Menu>
@@ -67,7 +67,7 @@ function NavbarComponent() {
             <Nav.Link>
               <Link className="nav-link" to="/login">
                 <LoginIcon style={{ marginRight: "5px" }} />
-                Iniciar sesión
+                Log In
               </Link>
             </Nav.Link>
           )}
