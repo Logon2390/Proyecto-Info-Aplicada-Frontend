@@ -1,6 +1,5 @@
 // React Imports
 import { useState } from "react";
-import type { FormEvent } from "react";
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -20,15 +19,14 @@ import { Col, Row } from "react-bootstrap";
 
 //other
 import { User } from "../model/Interfaces";
-import { useAuth } from "../auth/AuthContext";
-import axios from "axios";
 import sweetAlert from "sweetalert2";
+import axios from "axios";
 
 // States
 
 const Register: React.FC = () => {
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
   const [userError, setuserError] = useState(false);
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
@@ -39,8 +37,8 @@ const Register: React.FC = () => {
     firstName: "",
     lastName: "",
     email: "",
-    birthDate: new Date(),
-    password: ""
+    birthDate: "",
+    password: "",
   });
 
   const handleMouseDownPassword = (
@@ -66,6 +64,11 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      await handleCheckUsername();
+
+      if (userError) return;
+      if (!handleCheckForm()) return;
+
       const response = await axios.post(
         "https://localhost:7253/api/Users/register",
         user
@@ -75,7 +78,7 @@ const Register: React.FC = () => {
           sweetAlert.fire("Success", "User registered successfully", "success");
           navigate("/login");
         } else {
-          setuserError(true);
+          sweetAlert.fire("Error", "User could not be registered", "error");
         }
       }
     } catch (error) {
@@ -83,11 +86,44 @@ const Register: React.FC = () => {
     }
   };
 
+  const handleCheckUsername = async () => {
+    try {
+      const response = await axios.post(
+        `https://localhost:7253/api/Users/username?username=${user.username}`
+      );
+      if (response.status === 200) {
+        if (response.data.isAvailable === false) {
+          setuserError(true);
+        } else {
+          setuserError(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCheckForm = async () => {
+    if (
+      user.email.length === 0 ||
+      user.username.length === 0 ||
+      user.password.length === 0 ||
+      user.firstName.length === 0 ||
+      user.lastName.length === 0 ||
+      user.birthDate.length === 0
+    ) {
+      setError(true);
+      return false;
+    }
+    setError(false);
+    return true;
+  };
+
   return (
     <Container className="justify-content-md-center mt-5">
       <Row>
         <Col>
-          <h1 className="text-center">Register</h1>
+          
         </Col>
 
         <Col>
@@ -116,6 +152,7 @@ const Register: React.FC = () => {
                       name="email"
                       value={user.email}
                       onChange={handleInputChange}
+                      error={error}
                       required
                     />
 
@@ -143,6 +180,7 @@ const Register: React.FC = () => {
                       name="password"
                       value={user.password}
                       onChange={handleInputChange}
+                      error={error}
                       required
                       InputLabelProps={{ shrink: true }}
                       InputProps={{
@@ -175,6 +213,7 @@ const Register: React.FC = () => {
                       name="firstName"
                       value={user.firstName}
                       onChange={handleInputChange}
+                      error={error}
                       required
                     />
 
@@ -187,6 +226,7 @@ const Register: React.FC = () => {
                       name="lastName"
                       value={user.lastName}
                       onChange={handleInputChange}
+                      error={error}
                       required
                     />
 
@@ -199,7 +239,9 @@ const Register: React.FC = () => {
                       name="birthDate"
                       value={user.birthDate}
                       onChange={handleInputChange}
+                      error={error}
                       required
+                      InputLabelProps={{ shrink: true }}
                       InputProps={{
                         inputProps: {
                           max: new Date().toISOString().split("T")[0],
@@ -217,7 +259,9 @@ const Register: React.FC = () => {
                     </Button>
 
                     <div className="flex justify-center items-center flex-wrap gap-2">
-                      <Divider className="gap-3">Already have an account?</Divider>
+                      <Divider className="gap-3">
+                        Already have an account?
+                      </Divider>
                       <Link color="primary" to="/login">
                         Sign In
                       </Link>

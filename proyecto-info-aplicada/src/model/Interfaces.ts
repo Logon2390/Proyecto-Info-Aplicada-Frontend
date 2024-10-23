@@ -6,11 +6,12 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
-    birthDate : Date;
+    birthDate : string;
     password: string;
 }
 
 export interface FileData {
+    id: number;
     owner: string;
     type: string;
     size: number;

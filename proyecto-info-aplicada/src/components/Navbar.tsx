@@ -50,8 +50,8 @@ function NavbarComponent() {
 
               <Dropdown.Menu>
                 <NavDropdown.Item>
-                  <Link className="dropdown-item" to="/view1">
-                    Opt 1
+                  <Link className="dropdown-item" to="/userfiles">
+                    User files
                   </Link>
                 </NavDropdown.Item>
 

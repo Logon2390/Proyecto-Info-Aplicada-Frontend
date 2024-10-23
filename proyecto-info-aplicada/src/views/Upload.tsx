@@ -1,35 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { useNavigate } from "react-router-dom";
 import { FileData } from "../model/Interfaces";
+
+import { Button } from "@mui/material";
+import { useAuth } from "../auth/AuthContext";
+import swal from "sweetalert2";
 import {
   Col,
   Container,
-  Dropdown,
-  DropdownButton,
-  Form,
-  Modal,
   Row,
   Table,
 } from "react-bootstrap";
-import { Button, FormControl } from "@mui/material";
-import { useAuth } from "../auth/AuthContext";
-import Swal from "sweetalert2";
 
 const Upload: React.FC = () => {
   const { user } = useAuth();
-  const [showModal, setShowModal] = useState(false);
   const [filesData, setFilesData] = useState<FileData[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const navegar = useNavigate();
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleShowModal = () => {
-    setShowModal(true);
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -47,7 +33,7 @@ const Upload: React.FC = () => {
       if (allowedTypes.includes(file.type)) {
         setSelectedFile(file);
       } else {
-        Swal.fire("Error", "File type not allowed.", "error");
+        swal.fire("Error", "File type not allowed.", "error");
       }
     }
   };
@@ -56,6 +42,7 @@ const Upload: React.FC = () => {
     if (!selectedFile || !user) return;
 
     const fileData: FileData = {
+      id: 0,
       owner: user.username,
       type: selectedFile.type,
       size: selectedFile.size,
@@ -72,13 +59,13 @@ const Upload: React.FC = () => {
       if (response.status === 200) {
         setFilesData([...filesData, fileData]);
 
-        Swal.fire("Success", "File uploaded successfully.", "success");
+        swal.fire("Success", "File uploaded successfully.", "success");
         setSelectedFile(null);
       } else {
-        Swal.fire("Error", "File upload failed.", "error");
+        swal.fire("Error", "File upload failed.", "error");
       }
     } catch (error) {
-      Swal.fire("Error", "Something went wrong.", "error");
+      swal.fire("Error", "Something went wrong.", "error");
     }
   };
 
@@ -88,12 +75,10 @@ const Upload: React.FC = () => {
       <Row>
         <Row className="mt-4 mb-3">
           <Col>
-            <FormControl fullWidth>
-              <Button variant="contained" component="label" fullWidth>
-                Upload File
-                <input type="file" hidden onChange={handleFileChange} />
-              </Button>
-            </FormControl>
+            <Button variant="contained" component="label" fullWidth>
+              Upload File
+              <input type="file" hidden onChange={handleFileChange} />
+            </Button>
             {selectedFile && (
               <Button
                 variant="contained"
@@ -115,7 +100,6 @@ const Upload: React.FC = () => {
                 <th>File type</th>
                 <th>File size</th>
                 <th>Upload date</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -130,16 +114,6 @@ const Upload: React.FC = () => {
                   <td>{file.type}</td>
                   <td>{(file.size / 1024).toFixed(2)} KB</td>
                   <td>{new Date(file.createdAt).toLocaleString()}</td>
-                  <td>
-                    <DropdownButton id="dropdown-basic-button" title="Acciones">
-                      <Dropdown.Item onClick={() => alert("Eliminar")}>
-                        Delete
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => alert("Descargar")}>
-                        Download
-                      </Dropdown.Item>
-                    </DropdownButton>
-                  </td>
                 </tr>
               ))}
             </tbody>

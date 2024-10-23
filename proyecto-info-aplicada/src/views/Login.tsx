@@ -38,7 +38,7 @@ const Login: React.FC = () =>  {
     firstName: "",
     lastName: "",
     email: "",
-    birthDate: new Date(),
+    birthDate: "",
     password: ""
   });
 
@@ -65,6 +65,8 @@ const Login: React.FC = () =>  {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      if (handleCheckForm()) return;
+
       const response = await axios.post("https://localhost:7253/api/Users/login", {
         username: user.username,
         password: user.password,
@@ -82,11 +84,27 @@ const Login: React.FC = () =>  {
     }
   };
 
+  const handleCheckForm = () => {
+    if (
+      user.email.length === 0 ||
+      user.username.length === 0 ||
+      user.password.length === 0 ||
+      user.firstName.length === 0 ||
+      user.lastName.length === 0 ||
+      user.birthDate.length === 0
+    ) {
+      setError(true);
+      return false;
+    }
+    setError(false);
+    return true;
+  };
+
   return (
     <Container className="justify-content-md-center mt-5">
       <Row>
         <Col>
-          <h1 className="text-center">Login</h1>
+          
         </Col>
 
         <Col>
