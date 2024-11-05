@@ -1,9 +1,4 @@
-// React Imports
-import { useState } from "react";
-import type { FormEvent } from "react";
 import * as React from "react";
-import { Link, useNavigate } from "react-router-dom";
-
 // MUI Imports
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -17,89 +12,25 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Container from "react-bootstrap/Container";
 import { Col, Row } from "react-bootstrap";
-
-//other
-import { User } from "../model/Interfaces";
-import { useAuth } from "../auth/AuthContext";
-import axios from "axios";
-
-// States
+import { useLogin } from "./LoginContext";
+import { Link } from "react-router-dom";
 
 const Login: React.FC = () =>  {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [error, setError] = useState(false);
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [user, setUser] = React.useState<User>({
-    id: 0,
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    birthDate: "",
-    password: ""
-  });
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
+  const {
+    user,
+    error,
+    isPasswordShown,
+    showPassword,
+    handleClickShowPassword,
+    handleMouseDownPassword,
+    handleMouseUpPassword,
+    handleInputChange,
+    handleSubmit,
+  } = useLogin();
 
-  const handleMouseUpPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setUser({
-        ...user,
-        [name]: type === 'checkbox' ? checked : value
-    });
-};
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      if (handleCheckForm()) return;
-
-      const response = await axios.post("https://localhost:7253/api/Users/login", {
-        username: user.username,
-        password: user.password,
-      });
-      
-      if (response.data.isSuccess === true) {
-        login(user);
-        navigate("/");
-      } else {
-        setError(true);
-      }
-        
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleCheckForm = () => {
-    if (
-      user.email.length === 0 ||
-      user.username.length === 0 ||
-      user.password.length === 0 ||
-      user.firstName.length === 0 ||
-      user.lastName.length === 0 ||
-      user.birthDate.length === 0
-    ) {
-      setError(true);
-      return false;
-    }
-    setError(false);
-    return true;
-  };
-
+  
+  
   return (
     <Container className="justify-content-md-center mt-5">
       <Row>

@@ -1,7 +1,4 @@
-// React Imports
-import { useState } from "react";
 import * as React from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 // MUI Imports
 import Card from "@mui/material/Card";
@@ -16,109 +13,24 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Container from "react-bootstrap/Container";
 import { Col, Row } from "react-bootstrap";
-
-//other
-import { User } from "../model/Interfaces";
-import sweetAlert from "sweetalert2";
-import axios from "axios";
-
-// States
+import { Link } from "react-router-dom";
+import { useRegister } from "./RegisterContext";
 
 const Register: React.FC = () => {
-  const navigate = useNavigate();
-  const [error, setError] = useState(false);
-  const [userError, setuserError] = useState(false);
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-  const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [user, setUser] = React.useState<User>({
-    id: 0,
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    birthDate: "",
-    password: "",
-  });
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
-  const handleMouseUpPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setUser({
-      ...user,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await handleCheckUsername();
-
-      if (userError) return;
-      if (!handleCheckForm()) return;
-
-      const response = await axios.post(
-        "https://localhost:7253/api/Users/register",
-        user
-      );
-      if (response.status === 200) {
-        if (response.data.isSuccess === true) {
-          sweetAlert.fire("Success", "User registered successfully", "success");
-          navigate("/login");
-        } else {
-          sweetAlert.fire("Error", "User could not be registered", "error");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleCheckUsername = async () => {
-    try {
-      const response = await axios.post(
-        `https://localhost:7253/api/Users/username?username=${user.username}`
-      );
-      if (response.status === 200) {
-        if (response.data.isAvailable === false) {
-          setuserError(true);
-        } else {
-          setuserError(false);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleCheckForm = async () => {
-    if (
-      user.email.length === 0 ||
-      user.username.length === 0 ||
-      user.password.length === 0 ||
-      user.firstName.length === 0 ||
-      user.lastName.length === 0 ||
-      user.birthDate.length === 0
-    ) {
-      setError(true);
-      return false;
-    }
-    setError(false);
-    return true;
-  };
-
+  const {
+    user,
+    error,
+    userError,
+    isPasswordShown,
+    showPassword,
+    handleClickShowPassword,
+    handleMouseDownPassword,
+    handleMouseUpPassword,
+    handleInputChange,
+    handleSubmit,
+  } = useRegister();
+  
   return (
     <Container className="justify-content-md-center mt-5">
       <Row>
