@@ -58,7 +58,7 @@ function NavbarComponent() {
                 <NavDropdown.Divider />
                 <NavDropdown.Item>
                   <Link className="dropdown-item" to="/" onClick={handleLogout}>
-                    Sing out
+                    Log out
                   </Link>
                 </NavDropdown.Item>
               </Dropdown.Menu>
