@@ -10,6 +10,27 @@ export const useUserFiles = () => {
   const [selectedFileID, setSelectedFileID] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  const formatFileTypes = (type: string) => {
+    switch (type) {
+      case "text/plain":
+        return "Text";
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return "Word";
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        return "Excel";
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        return "PowerPoint";
+      case "application/pdf":
+        return "PDF";
+      case "image/png":
+        return "PNG";
+      case "image/jpeg":
+        return "JPEG";
+      default:
+        return "Unknown";
+    }
+  }
+
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -74,5 +95,6 @@ export const useUserFiles = () => {
     handleShowModal,
     handleCloseModal,
     handleModalDelete,
+    formatFileTypes,
   };
 };

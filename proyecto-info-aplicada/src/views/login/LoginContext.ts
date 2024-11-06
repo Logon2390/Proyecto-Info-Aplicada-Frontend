@@ -3,14 +3,16 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { User } from "../../model/Interfaces";
 import { useAuth } from "../../auth/AuthContext";
+import { useJwt } from "../../services/jwtServices";
 import axios from "axios";
 import React from "react";
 
 export const useLogin = () => {
   const { login } = useAuth();
+  const { getUserInfo, getUserFromToken } = useJwt();
   const navigate = useNavigate();
   const [user, setUser] = React.useState<User>({
-    id: 0,
+    id: "",
     username: "",
     firstName: "",
     lastName: "",
@@ -58,6 +60,8 @@ export const useLogin = () => {
       );
 
       if (response.data.isSuccess === true) {
+        localStorage.setItem("token", response.data.token);
+        const user = getUserFromToken();
         login(user);
         navigate("/");
       } else {
@@ -69,10 +73,7 @@ export const useLogin = () => {
   };
 
   const handleCheckForm = () => {
-    if (
-      user.username.length === 0 ||
-      user.password.length === 0
-    ) {
+    if (user.username.length === 0 || user.password.length === 0) {
       setError(true);
       return false;
     }
@@ -80,15 +81,15 @@ export const useLogin = () => {
     return true;
   };
 
-    return {
-        user,
-        error,
-        isPasswordShown,
-        showPassword,
-        handleClickShowPassword,
-        handleMouseDownPassword,
-        handleMouseUpPassword,
-        handleInputChange,
-        handleSubmit,
-    };
+  return {
+    user,
+    error,
+    isPasswordShown,
+    showPassword,
+    handleClickShowPassword,
+    handleMouseDownPassword,
+    handleMouseUpPassword,
+    handleInputChange,
+    handleSubmit,
+  };
 };

@@ -12,7 +12,7 @@ import {
 
 const UserFiles: React.FC = () => {
 
-  const { filesData, showModal, handleShowModal, handleCloseModal, handleModalDelete } = useUserFiles();
+  const { filesData, showModal, handleShowModal, handleCloseModal, handleModalDelete, formatFileTypes } = useUserFiles();
   return (
     <Container className="mt-5">
       <h1>My files</h1>
@@ -37,7 +37,7 @@ const UserFiles: React.FC = () => {
               {filesData.map((file, index) => (
                 <tr key={index}>
                   <td>{file.owner}</td>
-                  <td>{file.type}</td>
+                  <td>{formatFileTypes(file.type)}</td>
                   <td>{(file.size / 1024).toFixed(2)} KB</td>
                   <td>{new Date(file.createdAt).toLocaleString()}</td>
                   <td>

@@ -13,7 +13,7 @@ export const useRegister = () => {
   const handleClickShowPassword = () => setIsPasswordShown((show) => !show);
   const [showPassword, setShowPassword] = React.useState(false);
   const [user, setUser] = React.useState<User>({
-    id: 0,
+    id: "",
     username: "",
     firstName: "",
     lastName: "",

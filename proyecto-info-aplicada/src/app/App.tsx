@@ -6,16 +6,19 @@ import Upload from '../views/upload/Upload';
 import Login from '../views/login/Login';
 import Register from '../views/register/Register';
 import Userfiles from '../views/userFiles/UserFiles';
-import './styles/App.css';
+import Unauthorized from '../views/unauthorized/Unauthorized';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/App.css';
+//import '../views/home/Home.scss';
 
 const App: React.FC = () =>  {
   return (
     <Router>
+      <Navbar />
       <div className="App">
-        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
