@@ -1,17 +1,18 @@
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-
 import { User } from "../model/Interfaces";
 
 export const useJwt = () => {
-  const token = localStorage.getItem("token");
+
   const getUserInfo = () => {
+    const token = localStorage.getItem("token");
     if (!token) return;
     const decodedUser = jwtDecode<any>(token);
     return decodedUser;
   };
 
   const getUserFromToken = (): User | null => {
+    const token = localStorage.getItem("token");
     if (!token) return null;
     const decodedToken = jwtDecode<any>(token);
 
@@ -46,6 +47,7 @@ export const useJwt = () => {
   };
 
   axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
     if (!token) return config;
     const decodedToken: any = jwtDecode(token);
     const currentTime = Math.floor(Date.now() / 1000);
@@ -65,12 +67,3 @@ export const useJwt = () => {
     getUserFromToken,
   };
 };
-
-/*
-const getUserInfo = () => {
-  const token = localStorage.getItem("token");
-  if (!token) return;
-  const decodedUser = jwtDecode<JwtPayload>(token);
-  return decodedUser;
-};
-*/

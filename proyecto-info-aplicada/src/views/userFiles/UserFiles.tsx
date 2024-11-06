@@ -10,7 +10,6 @@ import {
   Row,
   Table,
   Pagination,
-  Col,
 } from "react-bootstrap";
 
 const UserFiles: React.FC = () => {
