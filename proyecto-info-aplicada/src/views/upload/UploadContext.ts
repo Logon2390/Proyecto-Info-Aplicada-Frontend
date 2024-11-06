@@ -3,6 +3,8 @@ import axios, { AxiosResponse } from "axios";
 import { useAuth } from "../../auth/AuthContext";
 import { FileData } from "../../model/Interfaces";
 import { SweetAlert } from "../../components/SweetAlert";
+import Base64 from "../../services/Base64";
+
 
 export const useUpload = () => {
   const { user } = useAuth();
