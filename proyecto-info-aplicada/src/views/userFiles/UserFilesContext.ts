@@ -9,6 +9,11 @@ export const useUserFiles = () => {
   const [filesData, setFilesData] = useState<FileData[]>([]);
   const [selectedFileID, setSelectedFileID] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showModalMultiple, setShowModalMultiple] = useState(false);
+  const [showModalZip, setShowModalZip] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const filesPerPage = 10;
+  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 
   const formatFileTypes = (type: string) => {
     switch (type) {
@@ -31,14 +36,43 @@ export const useUserFiles = () => {
     }
   }
 
+  const paginatedFiles = filesData.slice(
+    (currentPage - 1) * filesPerPage,
+    currentPage * filesPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleFileSelect = (fileId: number) => {
+    setSelectedFiles(
+      (prevSelected) =>
+        prevSelected.includes(fileId)
+          ? prevSelected.filter((id) => id !== fileId) // Deselect if already selected
+          : [...prevSelected, fileId] // Select if not already selected
+    );
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
+    setShowModalMultiple(false);
+    setShowModalZip(false);
   };
 
   const handleShowModal = (id: number) => {
     setShowModal(true);
     setSelectedFileID(id);
   };
+
+  const handleOpenModalMultiple = () => {
+    setShowModalMultiple(true);
+  };
+
+  const handleOpenModalZip = () => {
+    setShowModalZip(true);
+  };
+
 
   useEffect(() => {
     if (user) {
@@ -89,12 +123,55 @@ export const useUserFiles = () => {
       });
   };
 
+  const handleBulkDelete = async () => {
+    try {
+      const response = await axios.delete("https://localhost:7253/api/Documents/deleteDocuments", { data: selectedFiles });
+      if (response.data.isSuccess === true) {
+        setSelectedFiles([]);
+        setFilesData(filesData.filter((file) => !selectedFiles.includes(file.id)));
+        SweetAlert(
+          "success",
+          "Files deleted successfully",
+          "Files have been deleted",
+          "Ok"
+        );
+      }
+    } catch (error) {
+      SweetAlert(
+        "error",
+        "Error",
+        "An error occurred while deleting the files",
+        "error"
+      );
+      console.error(error);
+    }
+    setShowModalMultiple(false);
+  };
+
+  const handleBulkDownload = () => {
+    // Aquí puedes llamar a tu lógica para descargar varios archivos
+    alert("Descargar archivos seleccionados: " + selectedFiles.join(", "));
+  };
+
   return {
     filesData,
     showModal,
+    showModalMultiple,
+    showModalZip,
+    currentPage,
+    filesPerPage,
+    selectedFiles,
+    setSelectedFiles,
+    paginatedFiles,
+    handlePageChange,
+    handleFileSelect,
     handleShowModal,
+    handleOpenModalMultiple,
+    handleOpenModalZip,
     handleCloseModal,
     handleModalDelete,
     formatFileTypes,
+    handleBulkDelete,
+    handleBulkDownload,
   };
 };
