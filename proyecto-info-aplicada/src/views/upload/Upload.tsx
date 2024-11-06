@@ -3,7 +3,7 @@ import { useUpload } from "./UploadContext";
 import { Col, Container, Row, Table } from "react-bootstrap";
 
 const Upload: React.FC = () => {
-  const { selectedFile, handleFileChange, uploadFile, filesData } = useUpload();
+  const { selectedFiles, handleFileChange, uploadFile, filesData } = useUpload();
 
   return (
     <Container className="mt-5">
@@ -12,17 +12,17 @@ const Upload: React.FC = () => {
         <Row className="mt-4 mb-3">
           <Col>
             <Button variant="contained" component="label" fullWidth>
-              Upload File
-              <input type="file" hidden onChange={handleFileChange} />
+              Upload Files
+              <input type="file" hidden onChange={handleFileChange} multiple />
             </Button>
-            {selectedFile && (
+            {selectedFiles.length > 0 && (
               <Button
                 variant="contained"
                 color="primary"
                 onClick={uploadFile}
                 className="mt-3"
               >
-                Upload File
+                Upload Files
               </Button>
             )}
           </Col>
