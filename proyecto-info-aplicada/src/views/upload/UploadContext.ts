@@ -67,7 +67,7 @@ export const useUpload = () => {
         type: file.type,
         size: file.size,
         createdAt: new Date().toISOString(),
-        base64: "dummyBase64",
+        base64: await Base64.convertFileToBase64(file),
       };
 
       try {

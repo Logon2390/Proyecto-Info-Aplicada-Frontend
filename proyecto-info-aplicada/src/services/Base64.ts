@@ -15,7 +15,7 @@ class Base64 {
     }
 
     // Método privado para convertir un archivo individual a Base64
-    private static convertFileToBase64(file: File): Promise<string> {
+    static convertFileToBase64(file: File): Promise<string> {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
