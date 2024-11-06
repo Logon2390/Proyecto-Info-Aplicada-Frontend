@@ -1,4 +1,5 @@
-import {useUserFiles} from "../../views/userFiles/UserFilesContext";
+import { useState } from "react";
+import { useUserFiles } from "../../views/userFiles/UserFilesContext";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -8,11 +9,32 @@ import {
   Modal,
   Row,
   Table,
+  Pagination,
+  Col,
 } from "react-bootstrap";
 
 const UserFiles: React.FC = () => {
+  const {
+    filesData,
+    showModal,
+    handleShowModal,
+    handleCloseModal,
+    handleModalDelete,
+    formatFileTypes,
+  } = useUserFiles();
 
-  const { filesData, showModal, handleShowModal, handleCloseModal, handleModalDelete, formatFileTypes } = useUserFiles();
+  const [currentPage, setCurrentPage] = useState(1);
+  const filesPerPage = 10;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedFiles = filesData.slice(
+    (currentPage - 1) * filesPerPage,
+    currentPage * filesPerPage
+  );
+
   return (
     <Container className="mt-5">
       <h1>My files</h1>
@@ -21,7 +43,6 @@ const UserFiles: React.FC = () => {
           <Table>
             <thead>
               <tr>
-                <th>Owner</th>
                 <th>File type</th>
                 <th>File size</th>
                 <th>Upload date</th>
@@ -29,14 +50,13 @@ const UserFiles: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filesData.length === 0 && (
+              {paginatedFiles.length === 0 && (
                 <tr>
-                  <td colSpan={5}>No files found</td>
+                  <td colSpan={5}>No files saved yet.</td>
                 </tr>
               )}
-              {filesData.map((file, index) => (
+              {paginatedFiles.map((file, index) => (
                 <tr key={index}>
-                  <td>{file.owner}</td>
                   <td>{formatFileTypes(file.type)}</td>
                   <td>{(file.size / 1024).toFixed(2)} KB</td>
                   <td>{new Date(file.createdAt).toLocaleString()}</td>
@@ -54,6 +74,22 @@ const UserFiles: React.FC = () => {
               ))}
             </tbody>
           </Table>
+        </Row>
+
+        <Row className="justify-content-center">
+          <Pagination>
+            {[...Array(Math.ceil(filesData.length / filesPerPage)).keys()].map(
+              (page) => (
+                <Pagination.Item
+                  key={page}
+                  active={page + 1 === currentPage}
+                  onClick={() => handlePageChange(page + 1)}
+                >
+                  {page + 1}
+                </Pagination.Item>
+              )
+            )}
+          </Pagination>
         </Row>
       </Row>
 
