@@ -31,6 +31,12 @@ function NavbarComponent() {
                 Upload Files
               </Link>
             </Nav.Link>
+
+            <Nav.Link>
+              <Link className="nav-link" to="/start-mining">
+                Mining
+              </Link>
+            </Nav.Link>
           </Nav>
         ) : (
           <></>

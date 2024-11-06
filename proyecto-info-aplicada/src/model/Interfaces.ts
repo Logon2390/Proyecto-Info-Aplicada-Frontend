@@ -18,4 +18,14 @@ export interface FileData {
     createdAt: string;
     base64: string;
   }
+
+  export interface BlockData {
+    id: string;
+    fechaMinado: string;
+    prueba: string;
+    milisegundos: string;
+    documentos: string;
+    hashPrevio: string;
+    hash: string;
+}
   

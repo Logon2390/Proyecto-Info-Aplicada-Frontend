@@ -7,6 +7,7 @@ import Login from '../views/login/Login';
 import Register from '../views/register/Register';
 import Userfiles from '../views/userFiles/UserFiles';
 import Unauthorized from '../views/unauthorized/Unauthorized';
+import Mining from '../views/mining/Mining';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
 //import '../views/home/Home.scss';
@@ -18,6 +19,7 @@ const App: React.FC = () =>  {
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/start-mining" element={<Mining />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/login" element={<Login />} />
