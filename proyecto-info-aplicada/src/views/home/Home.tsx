@@ -1,15 +1,14 @@
-import React from 'react';
+import React from "react";
+import "./Home.css";
 
-function Home() {
+const Home: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          BIENVENIDO :D
-        </p>
-      </header>
+    <div>
+      <div className="container">
+          
+        </div>
     </div>
   );
-}
+};
 
 export default Home;

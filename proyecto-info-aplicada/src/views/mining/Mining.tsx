@@ -1,32 +1,34 @@
-import { Button } from "@mui/material";
-import { useUpload } from "./UploadContext";
+import React from "react";
 import { Col, Container, Row, Table, Pagination } from "react-bootstrap";
+import { Button } from "@mui/material";
 import { useState } from "react";
+import { useMiningContext } from "./MiningContext";
 
-const Upload: React.FC = () => {
+const Mining: React.FC = () => {
   const {
-    selectedFiles,
+    startMining,
+    filesData,
     handleFileChange,
     uploadFiles,
-    filesData,
+    selectedFiles,
     fileInputRef,
-    formatFileTypes,
-  } = useUpload();
+    blocksData,
+  } = useMiningContext();
   const [currentPage, setCurrentPage] = useState(1);
-  const filesPerPage = 10;
+  const blocksPerPage = 10;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const paginatedFiles = filesData.slice(
-    (currentPage - 1) * filesPerPage,
-    currentPage * filesPerPage
+  const paginatedBlocks = blocksData.slice(
+    (currentPage - 1) * blocksPerPage,
+    currentPage * blocksPerPage
   );
 
   return (
     <Container className="mt-5">
-      <h1 className="justify-content-start">Upload Files</h1>
+      <h1>Upload Files to Mine</h1>
       <Row className="mb-4">
         <Col>
           <input
@@ -49,28 +51,43 @@ const Upload: React.FC = () => {
         </Col>
       </Row>
 
+      <h1>My Blocks</h1>
       <Row>
         <Table striped bordered>
           <thead>
             <tr>
-              <th>Owner</th>
-              <th>File Type</th>
-              <th>File Size</th>
-              <th>Upload Date</th>
+              <th>ID</th>
+              <th>Mine date</th>
+              <th>Tests</th>
+              <th>Mss</th>
+              <th>Hash Prev</th>
+              <th>Hash</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedFiles.length === 0 && (
+            {paginatedBlocks.length === 0 && (
               <tr>
-                <td colSpan={5}>No files uploaded yet.</td>
+                <td colSpan={5}>No blocks added yet.</td>
               </tr>
             )}
-            {paginatedFiles.map((file, index) => (
+            {paginatedBlocks.map((block, index) => (
               <tr key={index}>
-                <td>{file.owner}</td>
-                <td>{formatFileTypes(file.type)}</td>
-                <td>{(file.size / 1024).toFixed(2)} KB</td>
-                <td>{new Date(file.createdAt).toLocaleString()}</td>
+                <td>{block.id}</td>
+                <td>{block.fechaMinado}</td>
+                <td>{block.prueba}</td>
+                <td>{block.milisegundos}</td>
+                <td>{block.hashPrevio}</td>
+                <td>{block.hash}</td>
+                <td>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => startMining(block.id)}
+                  >
+                    Mine
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -79,7 +96,7 @@ const Upload: React.FC = () => {
 
       <Row className="justify-content-center">
         <Pagination>
-          {[...Array(Math.ceil(filesData.length / filesPerPage)).keys()].map(
+          {[...Array(Math.ceil(blocksData.length / blocksPerPage)).keys()].map(
             (page) => (
               <Pagination.Item
                 key={page}
@@ -96,4 +113,4 @@ const Upload: React.FC = () => {
   );
 };
 
-export default Upload;
+export default Mining;

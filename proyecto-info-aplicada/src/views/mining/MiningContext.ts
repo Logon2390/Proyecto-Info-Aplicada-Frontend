@@ -1,12 +1,14 @@
-import React, { useState, useRef } from "react";
+import { Connection } from "../../services/Connection";
 import axios, { AxiosResponse } from "axios";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { FileData } from "../../model/Interfaces";
+import { FileData, BlockData } from "../../model/Interfaces";
 import { SweetAlert } from "../../components/SweetAlert";
 
-export const useUpload = () => {
+export const useMiningContext = () => {
   const { user } = useAuth();
   const [filesData, setFilesData] = useState<FileData[]>([]);
+  const [blocksData, setBlocksData] = useState<BlockData[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref for file input
@@ -23,7 +25,9 @@ export const useUpload = () => {
       "image/jpeg",
     ];
 
-    const filteredFiles = files.filter((file) => allowedTypes.includes(file.type));
+    const filteredFiles = files.filter((file) =>
+      allowedTypes.includes(file.type)
+    );
     if (filteredFiles.length !== files.length) {
       SweetAlert("error", "Error", "Some files were not allowed", "Ok");
     }
@@ -32,26 +36,24 @@ export const useUpload = () => {
     setUploadProgress(new Array(filteredFiles.length).fill(0));
   };
 
-  const formatFileTypes = (type: string) => {
-    switch (type) {
-      case "text/plain":
-        return "Text";
-      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return "Word";
-      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-        return "Excel";
-      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-        return "PowerPoint";
-      case "application/pdf":
-        return "PDF";
-      case "image/png":
-        return "PNG";
-      case "image/jpeg":
-        return "JPEG";
-      default:
-        return "Unknown";
+  const startMining = (blockId : string) => {
+    Connection.startMining(blockId);
+  };
+
+  useEffect(() => {
+    if (user) {
+      axios
+        .post(
+          "https://localhost:7253/api/Blocks/userBlocks?owner=" + user?.id
+        )
+        .then((response) => {
+          setBlocksData(response.data.value);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
-  }
+  }, [user]);
 
   const uploadFiles = async () => {
     if (!selectedFiles.length || !user) return;
@@ -70,22 +72,18 @@ export const useUpload = () => {
 
       try {
         await axios.post(
-          "https://localhost:7253/api/Documents/addDocument",
-          fileData,
+          "https://localhost:7253/api/Blocks/addBlock?ownerId=" + user.id,
           {
-            onUploadProgress: (progressEvent) => {
-              const progress = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
-              setUploadProgress((prev) => {
-                const newProgress = [...prev];
-                newProgress[i] = progress;
-                return newProgress;
-              });
-            },
+            documentos: [fileData],
           }
         );
 
-        setFilesData((prevData) => [...prevData, fileData]);
-        SweetAlert("success", "File uploaded", "File uploaded successfully", "Ok");
+        SweetAlert(
+          "success",
+          "File uploaded",
+          "File uploaded successfully to the blockchain.",
+          "Ok"
+        );
       } catch (error) {
         SweetAlert("error", "Error", "Something went wrong.", "Ok");
       }
@@ -96,5 +94,14 @@ export const useUpload = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  return { selectedFiles, handleFileChange, uploadFiles, filesData, uploadProgress, fileInputRef, formatFileTypes };
+  return {
+    startMining,
+    selectedFiles,
+    handleFileChange,
+    uploadFiles,
+    filesData,
+    uploadProgress,
+    fileInputRef,
+    blocksData,
+  };
 };
